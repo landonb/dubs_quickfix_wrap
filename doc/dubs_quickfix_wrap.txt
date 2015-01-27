@@ -1,0 +1,43 @@
+*dubs_quickfix_wrap.txt*	For Vim version 7.4.	Last change: 2015 Jan 23
+
+Dubsacks Vim -- Quickfix Wrapper~
+
+QUICKFIX WRAPPER			*dubs-quickfix-wrap*
+
+1. About This Plugin			|dubs-qfwrap-about|
+2. Quickfix Wrapper Commands		|dubs-qfwrap-commands|
+
+==============================================================================
+1. About This Plugin			*dubs-qfwrap-about*
+
+A simple wrapper around QuickFix.
+
+The quickfix window is nifty but has a few limitations:
+
+- There's no easy, built-in method for toggling
+  its visibility.
+
+- When hiding the quickfix, it affects other windows'
+  heights, which this script stops from happening.
+
+Project page: https://github.com/landonb/dubs_quickfix_wrap
+
+==============================================================================
+2. Quickfix Wrapper Commands		*dubs-qfwrap-commands*
+
+Quickfix Wrapper Commands
+
+				*<Shift-Alt-3>_* *<Alt-Shift-3>_* *<M-#>_* *<S-M-3>_* *<S-A-3>_*
+<Shift-Alt-3>		Toggle Quickfix window.
+
+				*<Leader>S* *\S*
+<Leader>S		Search-Replace Text in All Files Listed in
+			Quickfix Window.
+			
+			First search and populate the quickfix window (e.g.,
+			type \g to call GrepPrompt_Simple and start a search).
+			Next, select text and then type \S to start a
+			find-replace operation that'll bufdo all the files
+			listed in the quickfix window.
+
+ vim:tw=78:ts=8:ft=help:norl:
