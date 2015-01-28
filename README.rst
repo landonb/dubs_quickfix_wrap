@@ -14,7 +14,29 @@ The quickfix window is nifty but has a few limitations:
 - When hiding the quickfix, it affects other windows'
   heights, which this script stops from happening.
 
-Project page: https://github.com/landonb/dubs_quickfix_wrap
+Installation
+------------
+
+Standard Pathogen installation:
+
+.. code-block:: bash
+
+   cd ~/.vim/bundle/
+   git clone https://github.com/landonb/dubs_quickfix_wrap.git
+
+Or, Standard submodule installation:
+
+.. code-block:: bash
+
+   cd ~/.vim/bundle/
+   git submodule add https://github.com/landonb/dubs_quickfix_wrap.git
+
+Online help:
+
+.. code-block:: vim
+
+   :Helptags
+   :help dubs-quickfix-wrap
 
 Quickfix Wrapper Commands
 -------------------------
