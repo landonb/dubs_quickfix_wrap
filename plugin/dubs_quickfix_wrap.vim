@@ -1,11 +1,11 @@
 " File: dubs_quickfix_wrap.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2015.01.27
+" Last Modified: 2016.01.27
 " Project Page: https://github.com/landonb/dubs_quickfix_wrap
 " Summary: Quickfix wrapper
 " License: GPLv3
 " -------------------------------------------------------------------
-" Copyright © 2009, 2015 Landon Bouma.
+" Copyright © 2009, 2015-2016 Landon Bouma.
 " 
 " This file is part of Dubsacks.
 " 
@@ -467,4 +467,8 @@ endfunction
 "             inspecting log files and not, e.g., well, I don't
 "             know what the use case of this feature is.
 "autocmd! QuickfixCmdPost * call s:SortUniqQFList()
+
+" 2016.01.27: What's up with spell check enabled in the quickfix?
+"             It's annoying when I'm reading code!
+autocmd BufWinEnter quickfix setlocal nospell
 
