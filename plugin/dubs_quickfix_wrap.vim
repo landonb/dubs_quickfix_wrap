@@ -1,11 +1,11 @@
 " File: dubs_quickfix_wrap.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2016.01.27
+" Last Modified: 2017.11.02
 " Project Page: https://github.com/landonb/dubs_quickfix_wrap
 " Summary: Quickfix wrapper
 " License: GPLv3
 " -------------------------------------------------------------------
-" Copyright © 2009, 2015-2016 Landon Bouma.
+" Copyright © 2009, 2015-2017 Landon Bouma.
 " 
 " This file is part of Dubsacks.
 " 
@@ -124,13 +124,14 @@ function! s:QFixToggle_Hide(restore_minibufexp)
   "call inputrestore()
   " Close the minibuf explorer window (if it's open).
   " 2015.01.15: Deprecated: CMiniBufExplorer, replaced by MBEClose.
-  execute "MBEClose"
+  " 2017-11-02: Removed minibufexpl.vim.
+  "execute "MBEClose"
   " Close the Quickfix window.
   cclose
-  if a:restore_minibufexp == 1
-    " Deprecated: execute "MiniBufExplorer"
-    execute "MBEOpen"
-  endif
+  "if a:restore_minibufexp == 1
+  "  " Deprecated: execute "MiniBufExplorer"
+  "  execute "MBEOpen"
+  "endif
   " Resize the location list, if applicable.
   if getbufvar(winbufnr(l:last_llist_winnr), "&filetype") == 'qf'
     " Switch to the location list.
@@ -144,16 +145,17 @@ endfunction
 
 function! s:QFixToggle_Show(restore_minibufexp)
   let save_winnr = winnr()
-  execute "MBEClose"
+  " 2017-11-02: Removed minibufexpl.vim
+  "execute "MBEClose"
   " The plain copen command opens the Quickfix window on the bottom of the
   " screen, but it positions itself underneath and makes itself as wide as the
   " right-most window. Fortunately, we can use botright to force copen to use 
   " the full width of the window.
   execute "botright copen " . g:jah_Quickfix_Win_Height
-  if a:restore_minibufexp == 1
-    "execute "MiniBufExplorer"
-    execute "MBEOpen"
-  endif
+  "if a:restore_minibufexp == 1
+  "  "execute "MiniBufExplorer"
+  "  execute "MBEOpen"
+  "endif
   " NOTE For whatever reason, the previous call to MiniBufExplorer adds 4
   "      lines to the quickfix height, so we go back and fix it
   copen
