@@ -303,7 +303,8 @@ function! s:ToggleMiniBufExplorer()
   endif
   " Toggle the MiniBufExpl window
   "TMiniBufExplorer
-  MBEToggle
+  " 2017-11-02: Removed minibufexpl.vim.
+  "MBEToggle
   " Restore the QuickFix window height
   if l:restore_quick_fix_height > 0
     copen
