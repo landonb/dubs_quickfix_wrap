@@ -133,14 +133,18 @@ function! s:QFixToggle_Hide(restore_minibufexp)
   "  execute "MBEOpen"
   "endif
   " Resize the location list, if applicable.
-  if getbufvar(winbufnr(l:last_llist_winnr), "&filetype") == 'qf'
+  call s:QFixResizeLocationList(l:last_llist_winnr, l:restore_winnr)
+endfunction
+
+function! s:QFixResizeLocationList(last_llist_winnr, restore_winnr)
+  if getbufvar(winbufnr(a:last_llist_winnr), "&filetype") == 'qf'
     " Switch to the location list.
-    execute '' . l:last_llist_winnr . 'wincmd w'
+    execute '' . a:last_llist_winnr . 'wincmd w'
     " Resize the location list.
     execute "resize -" . g:jah_Quickfix_Win_Height
   endif
   " Reactivate the previously active window.
-  execute l:restore_winnr . 'wincmd w'
+  execute a:restore_winnr . 'wincmd w'
 endfunction
 
 function! s:QFixToggle_Show(restore_minibufexp)
