@@ -1,6 +1,6 @@
 " File: dubs_quickfix_wrap.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2017.11.02
+" Last Modified: 2017.12.14
 " Project Page: https://github.com/landonb/dubs_quickfix_wrap
 " Summary: Quickfix wrapper
 " License: GPLv3
@@ -82,12 +82,12 @@ function! <SID>QFixToggle(forced, tail_it)
   let l:restore_minibufexp = s:IsMiniBufExplorerShowing()
   let l:is_qfix_showing = s:IsQuickFixShowing()
   if (l:is_qfix_showing == 1 && a:forced != 1) || a:forced == -1
-    " Already showing and not being forced open, or being force closed
+    " Already showing and not being forced open, or being force closed.
     if l:is_qfix_showing == 1
       call <SID>QFixToggle_Hide(l:restore_minibufexp)
     endif
   elseif (l:is_qfix_showing == 0 && a:forced != -1) || a:forced == 1
-    " Not showing and not being forced-hidden, or being forced to show
+    " Not showing and not being forced-hidden, or being forced to show.
     if l:is_qfix_showing == 0
       call <SID>QFixToggle_Show(l:restore_minibufexp)
       " FIXME: If a location list is showing, toggling the quickfix
@@ -97,18 +97,18 @@ function! <SID>QFixToggle(forced, tail_it)
     endif
   endif
   if s:IsQuickFixShowing() == 1 && a:tail_it == 1
-    " Scroll to the bottom of the Quickfix window 
-    " (this is useful to see if there are any make errors)
-    let save_winnr = winnr()
+    " Scroll to the bottom of the Quickfix window .
+    " (This is useful to see if there are any make errors.)
+    let l:restore_winnr = winnr()
     copen
     normal G
-    execute save_winnr . 'wincmd w'
+    execute l:restore_winnr . 'wincmd w'
   endif
 endfunction
 
 function! s:QFixToggle_Hide(restore_minibufexp)
   " Remember the active window.
-  let save_winnr = winnr()
+  let l:restore_winnr = winnr()
   " Switch to the Quickfix window.
   copen
   " Remember the height of the Quickfix window.
@@ -140,11 +140,11 @@ function! s:QFixToggle_Hide(restore_minibufexp)
     execute "resize -" . g:jah_Quickfix_Win_Height
   endif
   " Reactivate the previously active window.
-  execute save_winnr . 'wincmd w'
+  execute l:restore_winnr . 'wincmd w'
 endfunction
 
 function! s:QFixToggle_Show(restore_minibufexp)
-  let save_winnr = winnr()
+  let l:restore_winnr = winnr()
   " 2017-11-02: Removed minibufexpl.vim
   "execute "MBEClose"
   " The plain copen command opens the Quickfix window on the bottom of the
@@ -160,7 +160,7 @@ function! s:QFixToggle_Show(restore_minibufexp)
   "      lines to the quickfix height, so we go back and fix it
   copen
   exe "resize " . g:jah_Quickfix_Win_Height
-  execute save_winnr . 'wincmd w'
+  execute l:restore_winnr . 'wincmd w'
 endfunction
 
 " Used to track the quickfix window
@@ -296,7 +296,7 @@ function! s:ToggleMiniBufExplorer()
   if s:IsQuickFixShowing() && mbeBufnr != -1
     " Both QuickFix and MiniBufExpl are visible; after we 
     " hide MiniBufExpl, we need to fix the QuickFix height
-    let save_winnr = winnr()
+    let l:restore_winnr = winnr()
     copen
     let g:jah_Quickfix_Win_Height = winheight(winnr())
     let l:restore_quick_fix_height = 1
@@ -309,7 +309,7 @@ function! s:ToggleMiniBufExplorer()
   if l:restore_quick_fix_height > 0
     copen
     exe "resize " . g:jah_Quickfix_Win_Height
-    execute save_winnr . 'wincmd w'
+    execute l:restore_winnr . 'wincmd w'
   endif
 endfunction
 
