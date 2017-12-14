@@ -108,7 +108,7 @@ endfunction
 
 function! s:QFixToggle_Hide(restore_minibufexp)
   " Remember the active window.
-  let l:restore_winnr = winnr()
+  let l:restore_winnr = s:QFixFindSafeWindow()
   " Switch to the Quickfix window.
   copen
   " Remember the height of the Quickfix window.
@@ -134,6 +134,25 @@ function! s:QFixToggle_Hide(restore_minibufexp)
   "endif
   " Resize the location list, if applicable.
   call s:QFixResizeLocationList(l:last_llist_winnr, l:restore_winnr)
+endfunction
+
+function! s:QFixFindSafeWindow()
+  let l:restore_winnr = winnr()
+  " 2017-12-14: Get outta the quickfix window!
+  if (&buftype == 'quickfix')
+    if winnr('$') > 1
+      try
+        wincmd p
+        let l:restore_winnr = winnr()
+        wincmd p
+      catch
+        "echom "Buffer is locked! Cannot switch windows."
+      endtry
+    else
+      enew
+    endif
+  endif
+  return l:restore_winnr
 endfunction
 
 function! s:QFixResizeLocationList(last_llist_winnr, restore_winnr)
