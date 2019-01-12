@@ -192,7 +192,7 @@ endfunction
 "      causing QFixToggle to jam and forcing 
 "      the user to :copen manually
 "      2011.01.17 Is this problem fixed? I haven't seen it in a while...
-augroup <SID>QFixToggle
+augroup QFixToggle
   autocmd!
   autocmd BufWinEnter quickfix 
     \ :let g:qfix_win = bufnr('$')
