@@ -1,5 +1,5 @@
-Dubsacks Vim — Quickfix Wrapper
-===============================
+Dubs Vim — Quickfix Wrapper
+===========================
 
 About This Plugin
 -----------------

@@ -1,6 +1,6 @@
 *dubs_quickfix_wrap.txt*	For Vim version 7.4.	Last change: 2015 Jan 23
 
-Dubsacks Vim -- Quickfix Wrapper~
+Dubs Vim -- Quickfix Wrapper~
 
 QUICKFIX WRAPPER			*dubs-quickfix-wrap*
 
