@@ -1,8 +1,11 @@
-Dubs Vim — Quickfix Wrapper
-===========================
+###################################
+Dubs Vim |em_dash| Quickfix Wrapper
+###################################
+
+.. |em_dash| unicode:: 0x2014 .. em dash
 
 About This Plugin
------------------
+=================
 
 A simple wrapper around QuickFix.
 
@@ -15,7 +18,7 @@ The quickfix window is nifty but has a few limitations:
   heights, which this script stops from happening.
 
 Installation
-------------
+============
 
 Standard Pathogen installation:
 
@@ -39,7 +42,7 @@ Online help:
    :help dubs-quickfix-wrap
 
 Quickfix Wrapper Commands
--------------------------
+=========================
 
 ==================================  ==================================  ==============================================================================
 Key Mapping                         Description                         Notes
