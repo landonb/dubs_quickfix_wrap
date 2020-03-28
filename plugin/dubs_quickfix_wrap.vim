@@ -417,15 +417,13 @@ function s:QuickfixSubstituteAll(search, replace)
     "      though the -e switch should get around that. Alas, it doesn't, 
     "      so go through the buffers the old fashioned way.
     bfirst
-    let l:done = 0
-    while !l:done
-      if getbufvar(bufnr('%'), '&modifiable') == 1
+    let l:bufnrs = filter(range(1, bufnr('$')), 'buflisted(v:val)')
+    for l:curnr in l:bufnrs
+      if getbufvar(l:curnr, '&modifiable') == 1
         execute "silent! .,$s/" . a:search . "/" . a:replace . "/gI"
       endif
       bnext
-      " We're done once we've processed the last buffer.
-      let l:done = bufnr("%") == bufnr("$")
-    endwhile
+    endfor
   endif
   " Close Quickfix if it was originally closed.
   if l:hide_quickfix
