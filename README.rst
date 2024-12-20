@@ -68,18 +68,49 @@ Quickfix Wrapper Commands
 ==================================  ==================================  ==============================================================================
 Key Mapping                         Description                         Notes
 ==================================  ==================================  ==============================================================================
-``<Shift-Alt-3>``                   Toggle Quickfix window.             Show/Hide the
-                                                                        `QuickFix <http://vimdoc.sourceforge.net/htmldoc/quickfix.html>`__
-                                                                        window.
+``<Shift-Alt-3>``                   Toggle Quickfix window              Show/Hide the `QuickFix <https://vimhelp.org/quickfix.txt.html>`__ window.
 
-                                                                        The QuickFix list shows search results, stack traces, and log file output.
-                                                                        It occupies the bottom part of the screen, above the command line
-                                                                        (or above the MiniBufExplorer, if that's showing).
-----------------------------------  ----------------------------------  ------------------------------------------------------------------------------
-``\S``                              Search-Replace Text in All Files    First search and populate the quickfix window (e.g.,
-                                    Listed in Quickfix Window.          type \g to call GrepPrompt_Simple and start a search).
-                                                                        Next, select text and then type \S to start a
-                                                                        find-replace operation that'll bufdo all the files
-                                                                        listed in the quickfix window.
+                                                                        The quickfix list shows search results, stack traces,
+                                                                        and log file output. It occupies the bottom part of
+                                                                        the screen, above the command line.
+---------------------------------  ----------------------------------  ------------------------------------------------------------------------------
+ ``\S``                             Search and Replace Text             This is similar to ``\s`` but it searches and replaces
+                                    in All Files Listed                 text in all files listed in the quickfix window.
+                                    in the QuickFix Window
+                                                                        - Hint: Do an ``<F4>`` or ``\g`` search to populate the
+                                                                          quickfix list (these two commands are part of
+                                                                          `dubs_grep_steady
+                                                                          <https://github.com/landonb/dubs_grep_steady#🧐>`__).
+
+                                                                        - Double-click the first entry in the Quickfix search
+                                                                          results to open that buffer.
+
+                                                                        - Highlight the text you want to replace and then
+                                                                          hit ``\`` and then ``S``.
+
+                                                                        - Type the replacement text and hit return, and the
+                                                                          command will find and replace in all of the files
+                                                                          in the Quickfix list (using ``:bufdo``).
+
+                                                                        Caveat: If you are not happy with the results, you'll
+                                                                        have to |:undo| (or maybe <Ctrl-Z>_ each file that
+                                                                        was edited; fortunately, a single undo undoes all
+                                                                        of the changes in each buffer.
+
+                                                                        Caveat: If a substring of your replacement text
+                                                                        matches the original text, the function will
+                                                                        endlessly recurse, oops!
+
+                                                                        - Just type ``<Ctrl-C>`` to stop it (or ``<Cmd-.>``
+                                                                          in MacVim).
+
+                                                                        SAVVY: This command is slow! You might be better off
+			                                                                  using a Git pipeline to replace text across files.
+
+			                                                                  - For example, run something like this:
+
+			                                                                    ``git ls-files -z | 
+			                                                                      xargs -0 -I '{}' bash -c '[ -h "{}" ] \
+                                                                  			    || sed -i -e "s/<pat>/<sub>/g" "{}"'``
 ==================================  ==================================  ==============================================================================
 
