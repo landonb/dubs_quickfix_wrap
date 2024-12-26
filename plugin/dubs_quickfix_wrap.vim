@@ -47,8 +47,6 @@ let g:plugin_dubs_quickfix_wrap = 1
 " SYNC_ME: Dubs Vim's <M-????> mappings are spread across plugins. [M-S-3]
 nnoremap <M-#> :QFix(0)<CR>
 inoremap <M-#> <C-O>:QFix(0)<CR>
-"cnoremap <M-#> <C-C>:QFix<CR>
-"onoremap <M-#> <C-C>:QFix<CR>
 
 " TODO Make height settable or at least 
 "      remember/restore between toggles
