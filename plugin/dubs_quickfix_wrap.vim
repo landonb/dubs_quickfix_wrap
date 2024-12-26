@@ -20,10 +20,21 @@
 
 " -------------------------------------------------------------------
 
-if exists("g:plugin_dubs_quickfix_wrap") || &cp
+" GUARD: Press <F9> to reload this plugin (or :source it).
+" - Via: https://github.com/embrace-vim/vim-source-reloader#↩️
+
+if expand('%:p') ==# expand('<sfile>:p')
+  unlet! g:plugin_dubs_quickfix_wrap
+endif
+
+if exists('g:plugin_dubs_quickfix_wrap') || &cp
+
   finish
 endif
+
 let g:plugin_dubs_quickfix_wrap = 1
+
+" -------------------------------------------------------------------
 
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Quickfix Toggle
