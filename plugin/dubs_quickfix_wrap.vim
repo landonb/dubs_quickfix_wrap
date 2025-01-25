@@ -56,8 +56,14 @@ let g:plugin_dubs_quickfix_wrap = 1
 "        toggling works again.
 " (Note: It's M-#, not M-S-3)
 " SYNC_ME: Dubs Vim's <M-????> mappings are spread across plugins. [M-S-3]
-nnoremap <M-#> :QFix(0)<CR>
-inoremap <M-#> <C-O>:QFix(0)<CR>
+if has('macunix')
+  " Note in Vim, £ is <M-#> (and ³ is <M-3>), but in Neovide <M-#> is ‹.
+  nnoremap ‹ :QFix(0)<CR>
+  inoremap ‹ <C-O>:QFix(0)<CR>
+else
+  nnoremap <M-#> :QFix(0)<CR>
+  inoremap <M-#> <C-O>:QFix(0)<CR>
+endif
 
 " TODO Make height settable or at least 
 "      remember/restore between toggles
