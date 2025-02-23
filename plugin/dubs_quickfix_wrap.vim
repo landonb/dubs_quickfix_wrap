@@ -352,7 +352,7 @@ endfunction
 
 " FIXME We could prompt for the replace term, but for now I just 
 "       have the user complete the function call...
-:noremap <Leader>S "sy:call <SID>QuickfixSubstituteAll("<C-r>s", "")<Left><Left>
+nnoremap <Leader>SQ "sy:call <SID>QuickfixSubstituteAll("<C-r>s", "")<Left><Left>
 
 " FIXME This fcn. requires the user to do an initial search. That is, this 
 "       fcn. does not search the term being replaced, but rather just uses
