@@ -96,11 +96,12 @@ function! s:QFixToggle_Hide()
   " If the window above the Quickfix is a Location List, then closing
   " the Quickfix window messes up the Location List's height. We'll fix
   " it later.
-  let l:last_llist_winnr = winnr() - 1
+  " - DUNNO: This functionality has not been verified in ages.
+  let l:prev_winnr = winnr("k") != winnr() ? winnr("k") : 0
   " Close the Quickfix window.
   cclose
   " Resize the location list, if applicable.
-  call s:QFixResizeLocationList(l:last_llist_winnr, l:restore_winnr)
+  call s:QFixResizeLocationList(l:prev_winnr, l:restore_winnr)
 endfunction
 
 function! s:QFixFindSafeWindow()
@@ -124,10 +125,10 @@ function! s:QFixFindSafeWindow()
   return l:restore_winnr
 endfunction
 
-function! s:QFixResizeLocationList(last_llist_winnr, restore_winnr)
-  if getbufvar(winbufnr(a:last_llist_winnr), "&filetype") == 'qf'
+function! s:QFixResizeLocationList(prev_winnr, restore_winnr)
+  if a:prev_winnr != 0 && getbufvar(winbufnr(a:prev_winnr), "&filetype") == 'qf'
     " Switch to the location list.
-    execute '' . a:last_llist_winnr . 'wincmd w'
+    execute '' . a:prev_winnr . 'wincmd w'
     " Resize the location list.
     execute "resize -" . g:jah_Quickfix_Win_Height
   endif
