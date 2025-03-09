@@ -180,9 +180,6 @@ endfunction
 "              type \S, refine the regex and add the substitution,
 "              then hit <Enter>. Substitutions galore!
 
-" See also: <Leader>s (\s), \S's little sibling that just
-"           find-replaces in the current buffer.
-
 " See also: There are much more advanced search-replace plugins.
 " - E.g., see grug-far:
 "   https://github.com/MagicDuck/grug-far.nvim
@@ -192,7 +189,7 @@ endfunction
 " - INERT: Is there a work around?
 
 if get(g:, 'dubs_quickfix_wrap_create_maps', 0)
-  nnoremap <Leader>SQ "sy:call QuickfixSubstituteAll("<C-r>s", "")<Left><Left>
+  nnoremap <LocalLeader>SQ "sy:call QuickfixSubstituteAll("<C-r>s", "")<Left><Left>
 endif
 
 " USAGE: This fcn. requires the user to do an initial search. That is, this 
