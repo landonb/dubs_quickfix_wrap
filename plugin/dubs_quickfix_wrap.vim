@@ -211,13 +211,12 @@ function QuickfixSubstituteAll(search, replace)
 
   " Make sure we're on the first line
   normal gg
-  " Get some stats on the error list
-  let l:first_line_len = col("$")
-  let l:window_last_line = line("w$")
-  let l:errors_exist = (l:window_last_line > 1) || (l:first_line_len > 1)
 
   " Make sure that's at least one error in the list
-  if l:errors_exist
+  let l:errors_count = len(getqflist({'winid' : 1}))
+  let l:buffers_edited = 0
+
+  if l:errors_count
     " Open all the files listed, starting with the first file in the list
     cc! 1
     " Open the remaining files using a handy Quickfix command
@@ -243,96 +242,51 @@ function QuickfixSubstituteAll(search, replace)
     "       command overwrites it, even with silent! in use.
     copen
     normal gg
-    " g - global (find all matches, not just one)
-    " n - don't replace, just count matches
-    " I - don't ignore care
+    " REFER: substitute flags:
+    "   g - global (find all matches, not just one)
+    "   n - don't replace, just count matches
+    "   I - don't ignore case
     execute ".,$s/" . a:search . "/" . a:replace . "/gnI"
     "
     " Go back to the window the user was in, otherwise we'll open 
     " the buffers in the Quickfix window.
     exe l:curwinnr . "wincmd w"
-    " Perform the find/replace operation.
-    " e - skip errors (else it stops when it tries the Quickfix buffer)
-    "execute "silent! bufdo .,$s/" . a:search . "/" . a:replace . "/geI"
-    " NOTE The last command fails on "no modifiable", even though I 
-    "      though the -e switch should get around that. Alas, it doesn't, 
-    "      so go through the buffers the old fashioned way.
-    bfirst
-    let l:bufnrs = filter(range(1, bufnr('$')), 'buflisted(v:val)')
-    for l:curnr in l:bufnrs
-      if getbufvar(l:curnr, '&modifiable') == 1
-        execute "silent! .,$s/" . a:search . "/" . a:replace . "/gI"
+    " Walk the quickfix list and perform the find/replace operations.
+    let l:walking = 1
+    let l:prev_bufnr = -1
+    cc 1
+    while l:walking
+      let l:cur_bufnr = bufnr()
+      if l:prev_bufnr != l:cur_bufnr
+        if getbufvar(l:cur_bufnr, '&modifiable') == 1
+          execute "silent! .,$s/" . a:search . "/" . a:replace . "/gI"
+
+          let l:buffers_edited += 1
+        endif
       endif
-      bnext
-    endfor
+      let l:prev_bufnr = l:cur_bufnr
+      try
+        cnext
+      catch
+        let l:walking = 0
+      endtry
+    endwhile
   endif
 
   " Close Quickfix if it was originally closed.
   if l:hide_quickfix
-    " So, "s:QFixToggle(-1, 0)" does not work, but "call <SID>..." does
-    call <SID>QFixToggle(-1, 0)
+    call s:QFixToggle(-1, 0)
   endif
 
   " Go back to the window and buffer the user called us from.
   exe l:curwinnr . "wincmd w"
-  " Ug. This silent! doesn't work like if does when I just run it myself...
-  "execute "silent! buffer! " . l:curbufnr
   silent! execute "buffer " . l:curbufnr
 
   " Print a status message.
-  if !l:errors_exist
+  if !l:errors_count
     echo "Nothing to do: no errors in the Quickfix error list!"
   else
-    " This is weird, but it's the only way I can figure out 
-    " how to show the user how many changes were made
-    " NOTE Calling :messages shows the whole message file, 
-    "      which might be larger than a single page. Fortunately, 
-    "      we can call g< to see just the last message, which 
-    "      handles to be the s//gn call that gave us a count.
-    execute "g<"
+    echom "Edited " .. string(l:buffers_edited) .. " files (from " .. string(l:errors_count) .. " qf items)"
   endif
 endfunction
-
-" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" Obsolete Functions
-" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-" Always sort the Quickfix list
-" ------------------------------------------------------
-" http://vim.wikia.com/wiki/Automatically_sort_Quickfix_list
-function! s:CompareQuickfixEntries(i1, i2)
-  if bufname(a:i1.bufnr) == bufname(a:i2.bufnr)
-    return a:i1.lnum == a:i2.lnum ? 0 : (a:i1.lnum < a:i2.lnum ? -1 : 1)
-  else
-    return bufname(a:i1.bufnr) < bufname(a:i2.bufnr) ? -1 : 1
-  endif
-endfunction
-
-function! s:SortUniqQFList()
-  let sortedList = sort(getqflist(), 's:CompareQuickfixEntries')
-  let uniqedList = []
-  let last = ''
-  for item in sortedList
-    let this = bufname(item.bufnr) . "\t" . item.lnum
-    if this !=# last
-      call add(uniqedList, item)
-      let last = this
-    endif
-  endfor
-  call setqflist(uniqedList)
-endfunction
-
-" 2014.01.31: [lb] moved from Vim 7.3 and Vim 7.4, from Fedora 14
-"             to Linux Mint 16, and now this fcn. messes up our
-"             Cyclopath <F7> function, which is to open the flash
-"             log file. In latter Vim, it opens the log, but it
-"             _only_ shows matching entries, i.e., errors and
-"             their files and line numbers, but the rest of the
-"             log file is omitted. How can I debug easily without
-"             my trace messages?
-"             Anyway, this feature is silly: we don't need to sort
-"             the quickfix list and remove duplicates, since we're
-"             inspecting log files and not, e.g., well, I don't
-"             know what the use case of this feature is.
-"autocmd! QuickfixCmdPost * call s:SortUniqQFList()
 
