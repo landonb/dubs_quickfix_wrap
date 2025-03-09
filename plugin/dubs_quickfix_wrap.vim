@@ -10,13 +10,9 @@
 "
 " A simple wrapper around QuickFix.
 "
-" The quickfix window is nifty but has a few limitations:
+" - Creates a toggle around :copen and :cclose
 "
-"   - There's no easy, built-in method for toggling
-"     its visibility.
-"
-"   - When hiding the quickfix, it affects other windows'
-"     heights, which this script stops from happening.
+" - Remembers the last window height.
 
 " -------------------------------------------------------------------
 
