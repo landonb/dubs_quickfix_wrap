@@ -241,6 +241,10 @@ set noequalalways
 " This fcn. opens every file in the Quickfix list and does a bufdo, e.g., 
 "    :bufdo .,$s/Search/Replace/g
 
+" NOTE: This fcn. opens each QF result and runs substitute.
+" - It works, but it's somewhat klunky, and slow. You might be
+"   better off using `sed` from a shell. Or a different plugin.
+
 " Typical use: Search for a term in the project directory.
 "              Open one of the results, select the term,
 "              type \S, refine the regex and add the substitution,
@@ -249,15 +253,22 @@ set noequalalways
 " See also: <Leader>s (\s), \S's little sibling that just
 "           find-replaces in the current buffer.
 
-" FIXME We could prompt for the replace term, but for now I just 
-"       have the user complete the function call...
-nnoremap <Leader>SQ "sy:call <SID>QuickfixSubstituteAll("<C-r>s", "")<Left><Left>
+" See also: There are much more advanced search-replace plugins.
+" - E.g., see grug-far:
+"   https://github.com/MagicDuck/grug-far.nvim
 
-" FIXME This fcn. requires the user to do an initial search. That is, this 
-"       fcn. does not search the term being replaced, but rather just uses
-"       the existing Quickfix error list
-function s:QuickfixSubstituteAll(search, replace)
-  "call confirm('Search for: ' . a:search . ' / ' . a:replace)
+" NOTE: If you're running Noice, you won't see the cmdline until you
+" press a key...
+" - INERT: Is there a work around?
+
+if get(g:, 'dubs_quickfix_wrap_create_maps', 0)
+  nnoremap <Leader>SQ "sy:call QuickfixSubstituteAll("<C-r>s", "")<Left><Left>
+endif
+
+" USAGE: This fcn. requires the user to do an initial search. That is, this 
+"        fcn. does not search the term being replaced, but rather just uses
+"        the existing Quickfix error list
+function QuickfixSubstituteAll(search, replace)
   " Remember the current buffer so we can jump back to it later
   let l:curwinnr = winnr()
   let l:curbufnr = winbufnr("%")
