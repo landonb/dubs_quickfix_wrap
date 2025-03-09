@@ -64,24 +64,16 @@ let g:jah_Quickfix_Win_Height=8
 command -bang -nargs=* QFix
   \ :call <SID>QFixToggle(<bang>0, <args>)
 function! <SID>QFixToggle(forced, tail_it)
-  "call inputsave()
-  "let TBD = input("forced: ". a:forced, " / tail_it: ". a:tail_it)
-  "call inputrestore()
-  let l:restore_minibufexp = s:IsMiniBufExplorerShowing()
   let l:is_qfix_showing = s:IsQuickFixShowing()
   if (l:is_qfix_showing == 1 && a:forced != 1) || a:forced == -1
     " Already showing and not being forced open, or being force closed.
     if l:is_qfix_showing == 1
-      call <SID>QFixToggle_Hide(l:restore_minibufexp)
+      call <SID>QFixToggle_Hide()
     endif
   elseif (l:is_qfix_showing == 0 && a:forced != -1) || a:forced == 1
     " Not showing and not being forced-hidden, or being forced to show.
     if l:is_qfix_showing == 0
-      call <SID>QFixToggle_Show(l:restore_minibufexp)
-      " FIXME: If a location list is showing, toggling the quickfix
-      "        increases the height of the location list each time
-      "        the quickfix is shown (decreasing the height of the
-      "        buffer window above it).
+      call <SID>QFixToggle_Show()
     endif
   endif
   if s:IsQuickFixShowing() == 1 && a:tail_it == 1
@@ -94,32 +86,19 @@ function! <SID>QFixToggle(forced, tail_it)
   endif
 endfunction
 
-function! s:QFixToggle_Hide(restore_minibufexp)
+function! s:QFixToggle_Hide()
   " Remember the active window.
   let l:restore_winnr = s:QFixFindSafeWindow()
   " Switch to the Quickfix window.
   copen
   " Remember the height of the Quickfix window.
   let g:jah_Quickfix_Win_Height = winheight(winnr())
-  " If the window before the Quickfix is a Location List
-  " (e.g., one of Syntastic's), then closing the Quickfix
-  " window messes up the Location List's height. We'll fix
+  " If the window above the Quickfix is a Location List, then closing
+  " the Quickfix window messes up the Location List's height. We'll fix
   " it later.
   let l:last_llist_winnr = winnr() - 1
-  "call inputsave()
-  "let TBD = input("g:jah_Quickfix_Win_Height: "
-  "                \ . g:jah_Quickfix_Win_Height)
-  "call inputrestore()
-  " Close the minibuf explorer window (if it's open).
-  " 2015.01.15: Deprecated: CMiniBufExplorer, replaced by MBEClose.
-  " 2017-11-02: Removed minibufexpl.vim.
-  "execute "MBEClose"
   " Close the Quickfix window.
   cclose
-  "if a:restore_minibufexp == 1
-  "  " Deprecated: execute "MiniBufExplorer"
-  "  execute "MBEOpen"
-  "endif
   " Resize the location list, if applicable.
   call s:QFixResizeLocationList(l:last_llist_winnr, l:restore_winnr)
 endfunction
@@ -154,23 +133,9 @@ function! s:QFixResizeLocationList(last_llist_winnr, restore_winnr)
   execute a:restore_winnr . 'wincmd w'
 endfunction
 
-function! s:QFixToggle_Show(restore_minibufexp)
+function! s:QFixToggle_Show()
   let l:restore_winnr = winnr()
-  " 2017-11-02: Removed minibufexpl.vim
-  "execute "MBEClose"
-  " The plain copen command opens the Quickfix window on the bottom of the
-  " screen, but it positions itself underneath and makes itself as wide as the
-  " right-most window. Fortunately, we can use botright to force copen to use 
-  " the full width of the window.
   execute "botright copen " . g:jah_Quickfix_Win_Height
-  "if a:restore_minibufexp == 1
-  "  "execute "MiniBufExplorer"
-  "  execute "MBEOpen"
-  "endif
-  " NOTE For whatever reason, the previous call to MiniBufExplorer adds 4
-  "      lines to the quickfix height, so we go back and fix it
-  copen
-  exe "resize " . g:jah_Quickfix_Win_Height
   execute l:restore_winnr . 'wincmd w'
 endfunction
 
@@ -266,63 +231,6 @@ endfunction
 " it (above it). Default Vim behavior 
 " is to resize all window the same size.
 set noequalalways
-
-" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" MiniBufExplorer Functions
-" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-" Opening and closing the MiniBufExplorer affects the heights of other
-" windows, most notably the QuickFix window (if it's open). Specifically, 
-" when the MiniBufExplorer is closed and the QuickFix window is visible, 
-" rather than the QuickFix window decreasing it size, it expands to include 
-" the rows abandoned by the MiniBufExplorer. Thusly, toggling the
-" MiniBufExplorer a number of times causes the QuickFix to grow until it 
-" consumes the whole screen, because the QuickFix window isn't resized when
-" the MiniBufExplorer window is opened (the windows above it are, which are
-" probably the windows your code is in). So we have to toggle smartly -- if 
-" we're closing the MiniBufExplorer window, we should restore the height of
-" the QuickFix window so that it doesn't grow wildly out of control.
-
-function! s:IsMiniBufExplorerShowing()
-  let is_showing = 0
-  let cur_winnr = 1
-  let cur_bufbr = winbufnr(cur_winnr)
-  while (cur_bufbr != -1)
-    " If the buffer in window cur_winnr is the quickfix buffer.
-    if (bufname(cur_bufbr) == "-MiniBufExplorer-")
-      let is_showing = 1
-      break
-    endif
-    let cur_winnr = cur_winnr + 1
-    let cur_bufbr = winbufnr(cur_winnr)
-  endwhile
-  return is_showing
-endfunction
-
-command -nargs=0 ToggleMiniBufExplorer
-  \ :call <SID>ToggleMiniBufExplorer()
-function! s:ToggleMiniBufExplorer()
-  let l:mbeBufnr = bufnr('-MiniBufExplorer-')
-  let l:restore_quick_fix_height = 0
-  if s:IsQuickFixShowing() && mbeBufnr != -1
-    " Both QuickFix and MiniBufExpl are visible; after we 
-    " hide MiniBufExpl, we need to fix the QuickFix height
-    let l:restore_winnr = winnr()
-    copen
-    let g:jah_Quickfix_Win_Height = winheight(winnr())
-    let l:restore_quick_fix_height = 1
-  endif
-  " Toggle the MiniBufExpl window
-  "TMiniBufExplorer
-  " 2017-11-02: Removed minibufexpl.vim.
-  "MBEToggle
-  " Restore the QuickFix window height
-  if l:restore_quick_fix_height > 0
-    copen
-    exe "resize " . g:jah_Quickfix_Win_Height
-    execute l:restore_winnr . 'wincmd w'
-  endif
-endfunction
 
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Search-Replace Text in All Files Listed in Quickfix Window
