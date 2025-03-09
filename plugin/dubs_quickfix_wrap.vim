@@ -56,10 +56,10 @@ if get(g:, 'dubs_quickfix_wrap_create_maps', 0)
   endif
 endif
 
-" TODO Make height settable or at least 
-"      remember/restore between toggles
-"let g:jah_Quickfix_Win_Height=14
-let g:jah_Quickfix_Win_Height=8
+" Latest Quickfix window height, used to restore on :copen.
+function! s:QuickfixWinHeight() abort
+  return get(g:, 'jah_Quickfix_Win_Height', 8)
+endfunction
 
 command -bang -nargs=* QFix
   \ :call <SID>QFixToggle(<bang>0, <args>)
@@ -130,7 +130,7 @@ function! s:QFixResizeLocationList(prev_winnr, restore_winnr)
     " Switch to the location list.
     execute '' . a:prev_winnr . 'wincmd w'
     " Resize the location list.
-    execute "resize -" . g:jah_Quickfix_Win_Height
+    execute "resize -" . s:QuickfixWinHeight()
   endif
   " Reactivate the previously active window.
   execute a:restore_winnr . 'wincmd w'
@@ -138,7 +138,10 @@ endfunction
 
 function! s:QFixToggle_Show()
   let l:restore_winnr = winnr()
-  execute "botright copen " . g:jah_Quickfix_Win_Height
+  " Use botright so that copen uses the full width of the window.
+  " - A plain copen creates a Quickfix window positioned under
+  "   and as wide as the last window.
+  execute "botright copen " . s:QuickfixWinHeight()
   execute l:restore_winnr . 'wincmd w'
 endfunction
 
