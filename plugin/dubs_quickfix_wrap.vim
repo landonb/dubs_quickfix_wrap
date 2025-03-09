@@ -105,6 +105,7 @@ endfunction
 
 function! s:QFixFindSafeWindow()
   let l:restore_winnr = winnr()
+
   " 2017-12-14: Get outta the quickfix window!
   if (&buftype == 'quickfix')
     if winnr('$') > 1
@@ -113,12 +114,13 @@ function! s:QFixFindSafeWindow()
         let l:restore_winnr = winnr()
         wincmd p
       catch
-        "echom "Buffer is locked! Cannot switch windows."
+        " echom "Buffer is locked! Cannot switch windows."
       endtry
     else
       enew
     endif
   endif
+
   return l:restore_winnr
 endfunction
 
@@ -237,7 +239,7 @@ set noequalalways
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 " Search and replace selected term all files listed in Quickfix
-" ------------------------------------------------------
+" -------------------------------------------------------------
 " This fcn. opens every file in the Quickfix list and does a bufdo, e.g., 
 "    :bufdo .,$s/Search/Replace/g
 
@@ -272,16 +274,20 @@ function QuickfixSubstituteAll(search, replace)
   " Remember the current buffer so we can jump back to it later
   let l:curwinnr = winnr()
   let l:curbufnr = winbufnr("%")
+
   " Remember if the Quickfix is currently showing so we can hide it
   let l:hide_quickfix = !(s:IsQuickFixShowing())
+
   " Open and jump to the Quickfix/error list
   copen
+
   " Make sure we're on the first line
   normal gg
   " Get some stats on the error list
   let l:first_line_len = col("$")
   let l:window_last_line = line("w$")
   let l:errors_exist = (l:window_last_line > 1) || (l:first_line_len > 1)
+
   " Make sure that's at least one error in the list
   if l:errors_exist
     " Open all the files listed, starting with the first file in the list
@@ -332,16 +338,19 @@ function QuickfixSubstituteAll(search, replace)
       bnext
     endfor
   endif
+
   " Close Quickfix if it was originally closed.
   if l:hide_quickfix
     " So, "s:QFixToggle(-1, 0)" does not work, but "call <SID>..." does
     call <SID>QFixToggle(-1, 0)
   endif
+
   " Go back to the window and buffer the user called us from.
   exe l:curwinnr . "wincmd w"
   " Ug. This silent! doesn't work like if does when I just run it myself...
   "execute "silent! buffer! " . l:curbufnr
   silent! execute "buffer " . l:curbufnr
+
   " Print a status message.
   if !l:errors_exist
     echo "Nothing to do: no errors in the Quickfix error list!"
