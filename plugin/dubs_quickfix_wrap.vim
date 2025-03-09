@@ -32,6 +32,14 @@ let g:plugin_dubs_quickfix_wrap = 1
 
 " -------------------------------------------------------------------
 
+" Spell Checking:
+" - If you generally enable spell check and want to avoid distracting
+"   spell checks in the quickfix results, especially useful when
+"   searching code, consider adding an autocmd to disable spell,
+"   e.g.,:
+"
+"   autocmd BufWinEnter quickfix setlocal nospell
+
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Quickfix Toggle
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -335,8 +343,4 @@ endfunction
 "             inspecting log files and not, e.g., well, I don't
 "             know what the use case of this feature is.
 "autocmd! QuickfixCmdPost * call s:SortUniqQFList()
-
-" 2016.01.27: What's up with spell check enabled in the quickfix?
-"             It's annoying when I'm reading code!
-autocmd BufWinEnter quickfix setlocal nospell
 
