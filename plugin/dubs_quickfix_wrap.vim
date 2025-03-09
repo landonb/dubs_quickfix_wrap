@@ -32,6 +32,11 @@ let g:plugin_dubs_quickfix_wrap = 1
 
 " -------------------------------------------------------------------
 
+" Sticky Height:
+" - Note that (Neo)vim sets &winfixheight = 1 on the quickfix window,
+"   so it shouldn't change size when you open/close wiindow panes or
+"   resize the application window (i.e., unaffected by &equalalways).
+
 " Spell Checking:
 " - If you generally enable spell check and want to avoid distracting
 "   spell checks in the quickfix results, especially useful when
@@ -156,19 +161,6 @@ endfunction
 function! s:IsQuickFixShowing() abort
   return getqflist({'winid' : 1}).winid != 0
 endfunction
-
-" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" Height Issues
-" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-" Toggle Annoyance
-" ------------------------------------------------------
-" When toggling the quickfix window,
-" make sure it only increases/decreases
-" the height of the window adjacent to 
-" it (above it). Default Vim behavior 
-" is to resize all window the same size.
-set noequalalways
 
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Search-Replace Text in All Files Listed in Quickfix Window
