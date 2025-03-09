@@ -142,84 +142,8 @@ function! s:QFixToggle_Show()
   execute l:restore_winnr . 'wincmd w'
 endfunction
 
-" Used to track the quickfix window
-" [lb] Not sure where I got this from, but 
-"      BufWinLeave doesn't always execute, 
-"      causing QFixToggle to jam and forcing 
-"      the user to :copen manually
-"      2011.01.17 Is this problem fixed? I haven't seen it in a while...
-augroup QFixToggle
-  autocmd!
-  autocmd BufWinEnter quickfix 
-    \ :let g:qfix_win = bufnr('$')
-  autocmd BufWinLeave * 
-    \ if exists("g:qfix_win") 
-    \     && expand("<abuf>") == g:qfix_win | 
-    \   unlet! g:qfix_win | 
-    \ endif
-augroup END
-" 2010.02.24 Switching to simpler/more realiable
-
-" function! s:IsQuickFixShowing()
-"   " The quickfix (or error) window is either the last window,
-"   " or it's the second-to-last window, if the MiniBufExplorer
-"   " window is showing.
-"   " Note: The MiniBufExplorer window and the Project window
-"   "         both have a &buftype of 'nofile';
-"   "       The quickfix and location lists indicate 'quickfix';
-"   "       and Using the a real file's buffer number of -1
-"   "         return the empty string.
-"   let is_showing = 0
-"   let cur_winnr = winnr('$')
-"   let cnt = 0
-"   let cur_bufbr = winbufnr(cur_winnr)
-"   while (cur_bufbr != -1 && cnt < 2)
-"     " Check if the buffer in window cur_winnr is the quickfix buffer.
-"     "   This is a hack: The location list windows are
-"     "   indistinguishable from the quickfix window; it's
-"     "   up to the code that opens a location list for a
-"     "   window to manage it... i.e., Syntastic.
-"     if (     getbufvar(cur_bufbr, "&buftype") == "quickfix"
-"         \ && getbufvar(cur_bufbr, "&filetype") == "qf")
-"       " Checking syntastic_owner_buffer sometimes works -- it's
-"       " only really set on the location list that Syntastic opens
-"       " -- but if you open the quickfix window after the location
-"       " list, for some reason the quickfix window gets the value, too.
-"       if (getbufvar(cur_bufbr, "syntastic_owner_buffer") == "")
-"         " Definitely not the Syntastic location list.
-"         let is_showing = 1
-"         break
-"       elseif (getbufvar(cur_bufbr, "syntastic_owner_buffer")
-"             \ != winbufnr(cur_winnr - 1))
-"         " Check the previous window and see if it's the owned buffer.
-"         let is_showing = 1
-"         break
-"       endif
-"     endif
-"     if (cnt == 0 && getbufvar(cur_bufbr, "&buftype") == "nofile")
-"       " Probably the MiniBufExplorer window; try the next window.
-"       let cnt = cnt + 1
-"       let cur_winnr = cur_winnr - 1
-"       let cur_bufbr = winbufnr(cur_winnr)
-"     else
-"       " We've checked the last two windows and did not identify it.
-"       break
-"     endif
-"   endwhile
-"   return is_showing
-" endfunction
-"
-" A much better version of the previous, inspired by:
-"  http://vertuxeltes.blogspot.com/2013/10/vim-distinguish-location-list-from.html
-"
-" FIXME: Move this to an autoload utility, eh.
-function! s:IsQuickFixShowing()
-  redir => l:buffer_list
-  silent ls
-  redir END
-  let l:quickfix_match = matchlist(
-    \ l:buffer_list, '\n\s*\d\+[^\n]*\[Quickfix List\]')
-  return empty(l:quickfix_match) ? 0 : 1
+function! s:IsQuickFixShowing() abort
+  return getqflist({'winid' : 1}).winid != 0
 endfunction
 
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
