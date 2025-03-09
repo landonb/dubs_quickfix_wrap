@@ -40,25 +40,20 @@ let g:plugin_dubs_quickfix_wrap = 1
 " (Quickfix is Vim's search results window, among other things.
 "  It's also global, as opposed to the one-per-window location list.)
 
-" Alt-Shift-3 // Toggle Search Results
-" --------------------------------
-" Or, in Vim terms, quickfix window
-" BUGBUG Sometimes after closing quickfix
-"        toggling the window no longer 
-"        works (you'll see :QFix in the 
-"        command-line window but nothing
-"        happens). For now, just use 
-"        :copen to force it open, then 
-"        toggling works again.
-" (Note: It's M-#, not M-S-3)
-" SYNC_ME: Dubs Vim's <M-????> mappings are spread across plugins. [M-S-3]
-if has('macunix')
-  " Note in Vim, £ is <M-#> (and ³ is <M-3>), but in Neovide <M-#> is ‹.
-  nnoremap ‹ :QFix(0)<CR>
-  inoremap ‹ <C-O>:QFix(0)<CR>
-else
+" Alt-Shift-3 // Toggle Quickfix Window
+" -------------------------------------
+" Opt-in <Shift-Alt-3> aka <M-#> Quickfix toggle.
+if get(g:, 'dubs_quickfix_wrap_create_maps', 0)
+  " Ideally, we'd suss meta enablement and only use <M-#> or ‹ but we're not
+  " that savvy. Also it's best if user create these maps themselves (which is
+  " why these maps are opt-in), so not gonna worry about it further.
   nnoremap <M-#> :QFix(0)<CR>
   inoremap <M-#> <C-O>:QFix(0)<CR>
+  if has('macunix')
+    " Literal macOS <Option-#>.
+    nnoremap ‹ :QFix(0)<CR>
+    inoremap ‹ <C-O>:QFix(0)<CR>
+  endif
 endif
 
 " TODO Make height settable or at least 
