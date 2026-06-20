@@ -36,8 +36,8 @@ Quickfix Wrapper Commands
 			and log file output. It occupies the bottom part of
 			the screen, above the command line.
 
-				*<Leader>S* *\S*
-<Leader>S		Search and Replace Text in All Files Listed in
+				*<LocalLeader>S* *\S*
+<LocalLeader>S		Search and Replace Text in All Files Listed in
 			the Quickfix Window.
 
 			This is similar to `\s` but it searches and replaces
